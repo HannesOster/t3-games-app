@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Developer {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String  @unique
+  games Game[]
+}
+
+model Game {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  genre       String
+  platform    String
+  releaseDate DateTime
+
+  developerId String     @db.ObjectId
+  developer   Developer  @relation(fields: [developerId], references: [id])
+
+  price       Decimal    @db.Decimal
+  multiplayer Boolean
+  metascore   Int
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
