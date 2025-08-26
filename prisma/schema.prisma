@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -16,17 +13,26 @@ model Developer {
   games Game[]
 }
 
+enum Genre {
+    RPG
+    Shooter
+    Action
+    Adventure
+    Simulation
+    Puzzle
+}
+
 model Game {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  genre       String
+  genre       Genre
   platform    String
   releaseDate DateTime
 
   developerId String     @db.ObjectId
   developer   Developer  @relation(fields: [developerId], references: [id])
 
-  price       Decimal    @db.Decimal
+  price       Float
   multiplayer Boolean
   metascore   Int
 
