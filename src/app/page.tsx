@@ -1,36 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { api } from "~/trpc/react";
 import { GamesTable } from "~/components/GamesTable";
 import { PaginationControls } from "~/components/PaginationControls";
+import { Input } from "~/components/ui/input";
+import { useDebouncedValue } from "~/lib/useDebouncedValue";
 
 export default function Home() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  const { data, isLoading } = api.games.getPaginated.useQuery({ page });
+  const [title, setTitle] = useQueryState("title", {
+    defaultValue: "",
+    history: "replace",
+  });
 
-  if (isLoading) {
-    return <div className="text-white">Loading…</div>;
-  }
+  const debouncedTitle = useDebouncedValue(title, 300);
 
-  if (!data) {
-    return <div className="text-white">No data found.</div>;
-  }
+  const { data, isLoading } = api.games.getPaginated.useQuery({
+    page,
+    title: debouncedTitle || undefined,
+  });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="w-full px-3">
-        <h2 className="mb-4 text-3xl font-bold">Games</h2>
+    <main className="flex min-h-screen flex-col justify-start bg-gradient-to-b from-[#2e026d] to-[#15162c] p-8 text-white">
+      <h2 className="mb-4 text-3xl font-bold">Games</h2>
 
-        <GamesTable games={data.games} />
+      <Input
+        value={title}
+        onChange={(e) => {
+          void setPage(1);
+          void setTitle(e.target.value);
+        }}
+        placeholder="Search by title…"
+        className="mb-4 w-full bg-white text-black"
+      />
 
-        <PaginationControls
-          page={page}
-          totalPages={data.totalPages}
-          onPageChange={setPage}
-        />
-      </div>
+      {isLoading ? (
+        <div className="text-white">Loading…</div>
+      ) : data && data.games.length > 0 ? (
+        <>
+          <GamesTable games={data.games} />
+
+          <PaginationControls
+            page={page}
+            totalPages={data.totalPages}
+            onPageChange={setPage}
+          />
+        </>
+      ) : (
+        <div className="text-white">No data found.</div>
+      )}
     </main>
   );
 }

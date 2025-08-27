@@ -1,4 +1,3 @@
-import type { Game } from "@prisma/client";
 import {
   Table,
   TableBody,

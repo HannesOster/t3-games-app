@@ -1,4 +1,3 @@
-import type { Game } from "@prisma/client";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import z from "zod";
 
@@ -8,7 +7,7 @@ export const gamesRouter = createTRPCRouter({
       z.object({
         title: z.string().min(1).max(100).optional(),
         page: z.number().min(1).default(1),
-        limit: z.number().min(1).max(50).default(20),
+        limit: z.number().min(1).max(50).default(15),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -33,7 +32,14 @@ export const gamesRouter = createTRPCRouter({
           skip: (page - 1) * limit,
           take: limit,
         }),
-        ctx.db.game.count(),
+        ctx.db.game.count({
+          where: {
+            title: {
+              contains: title,
+              mode: "insensitive",
+            },
+          },
+        }),
       ]);
 
       return {
