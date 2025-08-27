@@ -4,8 +4,12 @@ import { faker } from "@faker-js/faker";
 const prisma = new PrismaClient();
 
 async function main() {
-  const developerNames = Array.from({ length: 20 }, () => ({
-    name: faker.company.name(),
+  const developerNamesSet = new Set<string>();
+  while (developerNamesSet.size < 20) {
+    developerNamesSet.add(faker.company.name());
+  }
+  const developerNames = Array.from(developerNamesSet).map((name) => ({
+    name,
   }));
   await prisma.developer.createMany({
     data: developerNames,
