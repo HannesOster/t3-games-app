@@ -1,4 +1,12 @@
 import type { Game } from "@prisma/client";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
@@ -7,38 +15,36 @@ export default async function Home() {
   return (
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-3xl">
           <h2 className="mb-4 text-3xl font-bold">Games</h2>
-          <table className="w-full overflow-hidden rounded-lg border border-white/20 text-white">
-            <thead className="bg-white/10">
-              <tr>
-                <th className="px-4 py-2 text-left">Name</th>
-                <th className="px-4 py-2 text-left">Genre</th>
-                <th className="px-4 py-2 text-left">Platform</th>
-                <th className="px-4 py-2 text-left">Release Date</th>
-                <th className="px-4 py-2 text-left">Price</th>
-                <th className="px-4 py-2 text-left">Multiplayer</th>
-                <th className="px-4 py-2 text-left">Metascore</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Genre</TableHead>
+                <TableHead>Platform</TableHead>
+                <TableHead>Release Date</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Multiplayer</TableHead>
+                <TableHead>Metascore</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {games.map((game: Game) => (
-                <tr key={game.id} className="border-t border-white/10">
-                  <td className="px-4 py-2">{game.title}</td>
-                  <td className="px-4 py-2">{game.genre ?? "-"}</td>
-                  <td className="px-4 py-2">{game.platform ?? "-"}</td>
-                  <td className="px-4 py-2">
+                <TableRow key={game.id}>
+                  <TableCell>{game.title}</TableCell>
+                  <TableCell>{game.genre ?? "-"}</TableCell>
+                  <TableCell>{game.platform ?? "-"}</TableCell>
+                  <TableCell>
                     {game.releaseDate?.toLocaleDateString() ?? "-"}
-                  </td>
-                  <td className="px-4 py-2">{game.price ?? "-"}</td>
-                  <td className="px-4 py-2">
-                    {game.multiplayer ? "Yes" : "No"}
-                  </td>
-                  <td className="px-4 py-2">{game.metascore ?? "-"}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{game.price ?? "-"}</TableCell>
+                  <TableCell>{game.multiplayer ? "Yes" : "No"}</TableCell>
+                  <TableCell>{game.metascore ?? "-"}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </main>
     </HydrateClient>
