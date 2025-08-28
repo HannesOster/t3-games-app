@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app"; // <-- hier import
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NuqsAdapter>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <Suspense>{children}</Suspense>
+          </TRPCReactProvider>
         </NuqsAdapter>
       </body>
     </html>
