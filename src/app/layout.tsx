@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <NuqsAdapter>
           <TRPCReactProvider>
-            <Suspense>{children}</Suspense>
+            <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           </TRPCReactProvider>
         </NuqsAdapter>
       </body>
